@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFC93C">
+<title>Somu’s Crayons</title>
+<script>window.onerror=function(m,s,l){var d=document.createElement("p");d.style.cssText="background:#E8452C;color:#fff;padding:8px;margin:0;font:14px sans-serif";d.textContent="Error: "+m+" (line "+l+")";(document.body||document.documentElement).prepend(d)}</script>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--paper:#FFF9EE;--ink:#2B2A33;--red:#E8452C;--sun:#FFC93C;--teal:#1FA896;--plum:#6B4EA8;--line:#E4DCCB}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font-family:ui-rounded,'SF Pro Rounded','Arial Rounded MT Bold',Nunito,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:18px}
+body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+body.kid .a{display:none!important}body.adult .k{display:none!important}
+.screen{display:none;min-height:100%;padding:16px;max-width:640px;margin:0 auto}.screen.on{display:block}
+h1{font-size:30px;margin:8px 0 4px;font-weight:700}h2{font-size:24px;margin:0;font-weight:700}h3{font-size:18px;margin:20px 0 4px;font-weight:700;color:var(--plum)}
+p.sub{margin:0 0 12px;color:#6a6672}
+button{font:inherit;cursor:pointer;border:2px solid var(--ink);background:#fff;color:var(--ink);border-radius:16px;padding:10px 16px;font-weight:500}
+button:active{transform:scale(.97)}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
+.big{display:flex;align-items:center;gap:16px;width:100%;padding:20px 18px;font-size:24px;font-weight:700;margin-bottom:12px;text-align:left}
+.big small{display:block;font-size:15px;font-weight:500}.b1{background:var(--sun)}.b2{background:#7FD6C2}.b3{background:#F4B4C8}.b4{background:#B5D4F4}.big svg{width:44px;height:44px;flex:none}
+.rg{display:block;width:100%;margin-bottom:8px;padding:14px;font-size:20px;background:var(--sun);font-weight:700}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px}.chip{white-space:nowrap;padding:6px 14px;font-size:16px}.chip.sel{background:var(--ink);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:#fff;border:2px solid var(--ink);border-radius:16px;padding:8px;text-align:center}
+.card img{width:100%;aspect-ratio:1;object-fit:contain;display:block;background:#fff;border-radius:10px}.card span{display:block;margin-top:4px;font-size:16px}
+.card.add{display:flex;flex-direction:column;align-items:center;justify-content:center;border-style:dashed;min-height:140px;color:var(--plum);font-weight:700;cursor:pointer}
+.mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.mini button{flex:1 1 40%;padding:6px 4px;font-size:15px}
+.empty{grid-column:1/-1;padding:24px;text-align:center;color:#6a6672}
+#stage{position:relative;margin:0 auto;background:#fff;border:2px solid var(--ink);border-radius:12px;touch-action:none;overflow:hidden}
+#zoomer{position:absolute;inset:0;transform-origin:0 0}#zoomer canvas{position:absolute;inset:0;width:100%;height:100%}#lines{pointer-events:none}
+.tools{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}.tools button{flex:1;min-width:58px;padding:7px 4px;font-size:15px}.tools button.sel{background:var(--ink);color:#fff}
+.pal{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:8px 0}
+.sw{aspect-ratio:1;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);padding:0}.sw.sel{box-shadow:0 0 0 4px var(--ink)}
+.size{display:flex;align-items:center;gap:10px;margin:6px 0}.size input{flex:1}
+input[type=password],input[type=text]{font:inherit;padding:10px 14px;border:2px solid var(--ink);border-radius:12px;width:100%;margin:8px 0}
+input[type=color]{width:56px;height:44px;border:2px solid var(--ink);border-radius:12px;padding:2px;background:#fff}
+select{font:inherit;padding:8px;border:2px solid var(--ink);border-radius:12px;background:#fff}
+.msg{min-height:24px;color:#B3321B;font-weight:500}
+.row-item{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:2px solid var(--line);padding:10px 0}
+.row-item img{width:48px;height:48px;object-fit:contain;border:1px solid var(--line);border-radius:8px;background:#fff}
+.row-item .acts{display:flex;gap:6px}.row-item .acts button{padding:6px 12px;font-size:15px}
+.danger{border-color:#B3321B!important;color:#B3321B!important}.ok{background:#7FD6C2!important;color:var(--ink)!important;border-color:var(--ink)!important}
+.ov{display:none;position:fixed;inset:0;background:var(--paper);z-index:9;align-items:center;justify-content:center;text-align:center;padding:24px;flex-direction:column;gap:12px}
+.ov.on{display:flex}.ov>div{max-width:360px;width:100%}
+#rpc{width:min(92vw,420px);height:auto;background:#fff;border:2px solid var(--ink);border-radius:12px}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:20}
+</style>
+</head>
+<body>
+
+<section class="screen" id="welcome">
+  <h1>Welcome to Somu’s Crayons</h1>
+  <div id="wStep1"><p class="sub">Where are you? This sets spelling, units and paper size.</p><div id="regionGrid"></div></div>
+  <div id="wStep2" style="display:none"><p class="sub">Who is colouring?</p>
+    <input type="text" id="wName" placeholder="Name" maxlength="16" autocomplete="off">
+    <div class="tools"><button id="wAdult">Adult</button><button id="wKid">Kid</button></div>
+    <p class="sub">Kids profiles have simple tools, a parent PIN and an optional daily time limit.</p></div>
+  <p class="sub" style="margin-top:24px"><a href="privacy.html" target="_blank" rel="noopener">Privacy policy</a> · <a href="mailto:somuscrayons.support@gmail.com">Contact us</a></p>
+</section>
+
+<section class="screen" id="home">
+  <h1>Somu’s Crayons</h1>
+  <div class="chips" id="kids"></div>
+  <p class="sub" id="hi"></p>
+  <button class="big b1" data-go="pages"><svg viewBox="0 0 44 44" fill="none" stroke="#2B2A33" stroke-width="3" stroke-linejoin="round"><path d="M5 12h13l4 5h17v20H5z"/></svg><span>My pages<small data-cw="Choose a page to %l">Choose a page to colour</small></span></button>
+  <button class="big b2" data-go="gallery"><svg viewBox="0 0 44 44" fill="none" stroke="#2B2A33" stroke-width="3" stroke-linejoin="round"><rect x="5" y="8" width="34" height="28" rx="4"/><circle cx="16" cy="19" r="4"/><path d="M6 33l10-8 8 6 6-5 8 7"/></svg><span>My gallery<small id="stars">Your finished art</small></span></button>
+  <button class="big b3" data-go="parent"><svg viewBox="0 0 44 44" fill="none" stroke="#2B2A33" stroke-width="3" stroke-linejoin="round"><rect x="8" y="19" width="28" height="19" rx="4"/><path d="M14 19v-5a8 8 0 0116 0v5"/></svg><span>Parent zone<small>Approvals, time, backup</small></span></button>
+  <button class="big b4" data-go="settings"><svg viewBox="0 0 44 44" fill="none" stroke="#2B2A33" stroke-width="3" stroke-linejoin="round"><circle cx="22" cy="22" r="7"/><path d="M22 6v6M22 32v6M6 22h6M32 22h6"/></svg><span>Settings<small>Region and paper size</small></span></button>
+</section>
+
+<section class="screen" id="pages">
+  <div class="top"><button data-go="home" aria-label="Back">Back</button><h2>My pages</h2><span></span></div>
+  <div class="chips" id="cats"></div><div class="grid" id="pageGrid"></div>
+</section>
+
+<section class="screen" id="colour">
+  <div class="top"><button id="cBack" aria-label="Back">Back</button><h2 id="cTitle">Colouring</h2><button id="cSave">Save</button></div>
+  <div id="stage"><div id="zoomer"><canvas id="paint" width="800" height="800"></canvas><canvas id="lines" width="800" height="800"></canvas></div></div>
+  <div class="tools">
+    <button data-tool="fill" class="sel">Fill</button><button data-tool="brush">Brush</button><button data-tool="pencil">Pencil</button><button data-tool="crayon">Crayon</button>
+    <button data-tool="marker">Marker</button><button data-tool="shadow">Shadow</button><button data-tool="erase">Eraser</button>
+    <button data-tool="rainbow" class="k">Rainbow</button><button data-tool="glitter" class="k">Glitter</button><button data-tool="star" class="k">Star</button><button data-tool="heart" class="k">Heart</button>
+    <button data-tool="grad" class="a">Gradient</button><button data-tool="stripes" class="a">Stripes</button><button data-tool="dots" class="a">Dots</button><button data-tool="checks" class="a">Checks</button>
+  </div>
+  <div class="tools"><button id="undo">Undo</button><button id="redo">Redo</button><button id="zin" aria-label="Zoom in">Zoom +</button><button id="zout" aria-label="Zoom out">Zoom -</button><button id="cDone" class="ok">Done!</button></div>
+  <div class="pal" id="pal"></div>
+  <div class="a">
+    <div class="tools" style="align-items:center"><button id="slot" data-cw="Editing: %l 1">Editing: colour 1</button><button id="cur1" class="sw" style="flex:0 0 36px;min-width:36px" aria-label="Colour 1"></button><button id="cur2" class="sw" style="flex:0 0 36px;min-width:36px" aria-label="Colour 2"></button></div>
+    <div class="tools" style="align-items:center"><input type="color" id="pick" value="#e8452c" aria-label="Colour picker"><input type="text" id="hex" maxlength="7" placeholder="#RRGGBB" style="flex:1;margin:0"><button id="saveCol" data-cw="Save %l">Save colour</button></div>
+    <div class="pal" id="saved"></div>
+  </div>
+  <div class="size"><span>Size</span><input type="range" id="size" min="6" max="60" value="22" aria-label="Brush size"></div>
+  <div class="size" id="sRow" style="display:none"><span>Strength</span><input type="range" id="str" min="0" max="100" value="50" aria-label="Shadow strength"></div>
+</section>
+
+<section class="screen" id="gallery">
+  <div class="top"><button data-go="home" aria-label="Back">Back</button><h2>My gallery</h2><span></span></div><div class="grid" id="galGrid"></div>
+</section>
+
+<section class="screen" id="settings">
+  <div class="top"><button data-go="home" aria-label="Back">Back</button><h2>Settings</h2><span></span></div>
+  <div class="row-item"><span>Region</span><select id="setRegion" aria-label="Region"></select></div>
+  <div class="row-item"><span>Paper size for printing</span><select id="setPaper" aria-label="Paper size"><option value="letter">US Letter</option><option value="a4">A4</option></select></div>
+  <p class="sub" style="margin-top:12px">Region sets spelling, units and the default paper size.</p>
+  <div class="row-item"><span>Privacy policy</span><a href="privacy.html" target="_blank" rel="noopener">Read</a></div>
+  <div class="row-item"><span>Contact us</span><a href="mailto:somuscrayons.support@gmail.com">somuscrayons.support@gmail.com</a></div>
+</section>
+
+<section class="screen" id="parent">
+  <div class="top"><button data-go="home" aria-label="Back">Back</button><h2>Parent zone</h2><span></span></div>
+  <div id="pinBox"><p class="sub" id="pinText">Enter your PIN.</p><input type="password" id="pinIn" inputmode="numeric" maxlength="4" placeholder="4-digit PIN" autocomplete="off"><div class="msg" id="pinMsg"></div><button id="pinGo">Continue</button></div>
+  <div id="pBox" style="display:none">
+    <h3>Daily time (Kids profiles)</h3>
+    <div class="row-item"><span>Limit for each child</span><select id="limit" aria-label="Daily time"><option value="0">No limit</option><option value="15">15 min</option><option value="30">30 min</option><option value="60">60 min</option></select></div>
+    <h3>Progress</h3><div id="dash"></div>
+    <h3>Waiting for approval</h3><div id="pend"></div>
+    <h3>Add a page</h3><div class="row-item"><span>Any size, JPG or PNG</span><button id="addBtn">Choose image</button></div>
+    <h3>Your uploaded pages</h3><div id="mine"></div>
+    <h3>Profiles</h3><div id="kidList"></div>
+    <div class="row-item"><span>Add a profile</span><div class="acts"><button id="addKid">Kid</button><button id="addAdult">Adult</button></div></div>
+    <h3>Backup</h3>
+    <div class="row-item"><span>Save everything to a file</span><button id="bk">Back up</button></div>
+    <div class="row-item"><span>Restore from a file</span><button id="rs">Restore</button></div>
+    <h3>Security</h3>
+    <div class="row-item"><span>Change PIN</span><button id="chgPin">Change</button></div>
+    <div class="row-item"><span>Delete all pages and art</span><button id="wipe" class="danger">Delete data</button></div>
+    <p class="sub" style="margin-top:16px">Everything is stored only on this phone. Use Back up to keep a copy.</p>
+    <p class="sub"><a href="privacy.html" target="_blank" rel="noopener">Privacy policy</a> · <a href="mailto:somuscrayons.support@gmail.com">Contact us</a></p>
+  </div>
+  <input type="file" id="file" accept="image/png,image/jpeg" hidden><input type="file" id="rfile" accept="application/json,.json" hidden>
+</section>
+
+<div class="ov" id="lock"><div><h1>Time for a break</h1><p class="sub">Today's time is used up. A parent can add more.</p>
+<input type="password" id="lockPin" inputmode="numeric" maxlength="4" placeholder="Parent PIN" autocomplete="off"><div class="msg" id="lockMsg"></div><button id="lockGo">Add 15 minutes</button></div></div>
+<div class="ov" id="rp"><canvas id="rpc" width="800" height="800"></canvas><div class="row-item" style="border:0;justify-content:center"><a id="rpSave" download="timelapse.webm" style="display:none"><button class="ok">Save video</button></a><button id="rpClose">Close</button></div></div>
+<canvas id="fx"></canvas>
+
+<script src="app1.js"></script>
+<script src="app2.js"></script>
+<script src="app3.js"></script>
+<script src="app4.js"></script>
+</body>
+  </html>
+                                                                                                                      
